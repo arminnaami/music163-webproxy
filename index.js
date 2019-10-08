@@ -13,17 +13,17 @@ XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
 	}
 	this._open(method, u.href, async, user, password)
 }
-document.addEventListener('click', function(e) {
-	e.preventDefault()
-	let el = e.target
-	while (el && el.tagName !== 'A') {
-		el = el.parentElement
-	}
-	if (el && el.tagName === 'A' && el.getAttribute('href').startsWith('/')) {
-		e.preventDefault()
-		top.location.href = location.protocol + '//' + location.host + el.getAttribute('href')
-	}
-})
+window.onload = function() {
+	document.addEventListener('mousedown', function(e) {
+		let el = e.target
+		while (el && el.tagName !== 'A') {
+			el = el.parentElement
+		}
+		if (el && el.tagName === 'A' && el.getAttribute('href').startsWith('/')) {
+			el.href = location.protocol + '//' + location.host + el.getAttribute('href')
+		}
+	})
+}
 `
 proxy.on('proxyReq', (proxyReq, req, res, options) => {
 	proxyReq.setHeader('X-Real-IP', '111.25.24.23')

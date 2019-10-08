@@ -36,11 +36,35 @@ proxy.on('proxyRes', (proxyRes, req, res, options) => {
 		}
 		return request(u).pipe(res)
 	}
+	const headers = proxyRes.headers
 	const type = proxyRes.headers['content-type']
 	if (proxyRes.headers['content-encoding'] === 'gzip') {
 		proxyRes = proxyRes.pipe(zlib.createGunzip())
 	}
-	if (type && type.includes('html')) {
+	if (req.url.startsWith('/weapi/song/enhance/player/url/v1')) {
+		// res.writeHead(200, headers)
+		let body = []
+		proxyRes
+			.on('data', chunk => {
+				body.push(chunk)
+			})
+			.on('end', () => {
+				let json = Buffer.concat(body).toString()
+				const data = JSON.parse(json)
+				const url = data.data[0].url
+				if (url.includes('m10')) {
+					// dns cache pollution for dns servers outside of China
+					data.data[0].url = url.replace('m10', 'm11')
+				}
+				if (url.includes('m801')) {
+					// because m801 will block user by Referer
+					data.data[0].url = url.replace('m801', 'm701')
+				}
+				res.write(JSON.stringify(data))
+				res.end()
+			})
+	} else if (type && type.includes('html')) {
+		res.writeHead(200, headers)
 		let body = []
 		proxyRes
 			.on('data', chunk => {
@@ -49,7 +73,9 @@ proxy.on('proxyRes', (proxyRes, req, res, options) => {
 			.on('end', () => {
 				let html = Buffer.concat(body).toString()
 				html = html.replace('<head>', `<head><script>${HOOK_JS}</script>`)
-				res.end(html)
+				zlib.gzip(html, (err, result) => {
+					res.end(result)
+				})
 			})
 	} else {
 		proxyRes.pipe(res)

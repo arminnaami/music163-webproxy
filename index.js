@@ -7,13 +7,13 @@ const proxy = httpProxy.createProxyServer({})
 const HOOK_JS = `
 XMLHttpRequest.prototype._open = XMLHttpRequest.prototype.open
 XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
-  const u = new URL(url, location.href)
-  if(u.hostname === 'music.163.com') {
-	u.hostname = location.hostname
-  }
-  this._open(method, u.href, async, user, password)
+	const u = new URL(url, location.href)
+	if (u.hostname === 'music.163.com') {
+		u.hostname = location.hostname
+	}
+	this._open(method, u.href, async, user, password)
 }
-document.addEventListener('click', function (e) {
+document.addEventListener('click', function(e) {
 	e.preventDefault()
 	let el = e.target
 	while (el && el.tagName !== 'A') {

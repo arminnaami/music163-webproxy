@@ -14,13 +14,14 @@ XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
   this._open(method, u.href, async, user, password)
 }
 document.addEventListener('click', function (e) {
+	e.preventDefault()
 	let el = e.target
 	while (el && el.tagName !== 'A') {
 		el = el.parentElement
 	}
-	if (el && el.tagName === 'A' && el.href.startsWith('/')) {
+	if (el && el.tagName === 'A' && el.getAttribute('href').startsWith('/')) {
 		e.preventDefault()
-		location.href = location.host + el.href
+		location.href = location.protocol + '//' + location.host + el.getAttribute('href')
 	}
 })
 `

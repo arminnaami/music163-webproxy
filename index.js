@@ -21,7 +21,7 @@ document.addEventListener('click', function (e) {
 	}
 	if (el && el.tagName === 'A' && el.getAttribute('href').startsWith('/')) {
 		e.preventDefault()
-		location.href = location.protocol + '//' + location.host + el.getAttribute('href')
+		top.location.href = location.protocol + '//' + location.host + el.getAttribute('href')
 	}
 })
 `

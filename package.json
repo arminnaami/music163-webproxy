@@ -1,0 +1,13 @@
+{
+	"name": "music163-webproxy",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"dependencies": {
+		"http-proxy": "^1.18.0",
+		"request": "^2.88.0"
+	},
+	"license": "MIT"
+}

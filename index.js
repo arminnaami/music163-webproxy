@@ -72,7 +72,9 @@ proxy.on('proxyRes', (proxyRes, req, res, options) => {
 			})
 			.on('end', () => {
 				let html = Buffer.concat(body).toString()
-				html = html.replace('<head>', `<head><script>${HOOK_JS}</script>`)
+				html = html
+					.replace('<head>', `<head><script>${HOOK_JS}</script>`)
+					.replace(/var siteReg = .*?;/, 'var siteReg = { test: function (){ return true } };')
 				zlib.gzip(html, (err, result) => {
 					res.end(result)
 				})
@@ -82,12 +84,10 @@ proxy.on('proxyRes', (proxyRes, req, res, options) => {
 	}
 })
 
-const server = http.createServer(function(req, res) {
+http.createServer(function(req, res) {
 	proxy.web(req, res, {
 		changeOrigin: true,
 		target: 'https://music.163.com',
 		selfHandleResponse: true
 	})
-})
-
-server.listen(process.env.PORT || 80)
+}).listen(process.env.PORT || 80)
